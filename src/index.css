@@ -1,0 +1,35 @@
+.sudokuGridSquare {
+    background: #fff;
+    border: 1px solid rgb(0, 0, 0);
+    float: left;
+    font-size: 24px;
+    font-weight: bold;
+    line-height: 34px;
+    height: 34px;
+    padding: 0;
+    text-align: center;
+    width: 34px;
+}
+
+.sudokuGridRow:after {
+    clear: both;
+    content: "";
+    display: table;
+}
+
+div .sudokuGridSquare:nth-child(3n-3) {
+    border-right: 2px solid black;
+}
+
+.sudokuGrid {
+    border-left: 2px solid black;
+    border-top: 2px solid black;
+    border-right: 2px solid black;
+    display: table;
+    margin-right: -1px;
+}
+
+div .sudokuGridRow:nth-child(3n) {
+    border-bottom: 2px solid black;
+    margin-bottom: -1px;
+}
