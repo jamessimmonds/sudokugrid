@@ -60,7 +60,11 @@ class SudokuGrid extends React.Component {
     }
 
     render() {
-        return this.renderGrid();
+        return (
+            <div>
+                <h1>Sudoku puzzle</h1>
+                {this.renderGrid()}
+            </div>);
     }
 
 }

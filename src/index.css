@@ -1,3 +1,8 @@
+body {
+    margin: 45px;
+    font-family:'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+}
+
 .sudokuGridSquare {
     background: #fff;
     border: 1px solid rgb(0, 0, 0);
