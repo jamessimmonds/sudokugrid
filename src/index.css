@@ -38,3 +38,19 @@ div .sudokuGridRow:nth-child(3n) {
     border-bottom: 2px solid black;
     margin-bottom: -1px;
 }
+
+.solveButton {
+    border-radius: 5px;
+    background: #11aeca;
+    color: white;
+    font-weight: bold;
+    font-size: 15px;
+    border: 1px solid #128594;
+    height: 40px;
+    width: 150px;
+    margin-top: 20px;
+}
+
+.solveButton:hover {
+    background: #12a2bb;
+}

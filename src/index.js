@@ -59,11 +59,16 @@ class SudokuGrid extends React.Component {
         return <SudokuGridRow key={i} row={i} values={values} />
     }
 
+    solve() {
+        alert("Button clicked");
+    }
+
     render() {
         return (
             <div>
                 <h1>Sudoku puzzle</h1>
                 {this.renderGrid()}
+                <button className="solveButton" onClick={() => this.solve()}>Solve sudoku</button>
             </div>);
     }
 
