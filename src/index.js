@@ -67,7 +67,7 @@ class SudokuGrid extends React.Component {
             <div>
                 <h1>Sudoku puzzle</h1>
                 {this.renderGrid()}
-                <button className="solveButton" onClick={() => this.test()}>Solve sudoku</button>
+                <button className="solveButton" onClick={() => this.solve()}>Solve sudoku</button>
                 <p>{this.state.status}</p>
             </div>);
     }
@@ -188,11 +188,81 @@ class SudokuGrid extends React.Component {
         let colTest = this.testInsertionColumn(sudoku, col, candidate);
         let boxTest = this.testInsertionBox(sudoku, row, col, candidate);
 
+        //console.log("Results for", row, col, candidate, rowTest, colTest, boxTest);
+
         if (rowTest && colTest && boxTest) {
             return true;
         } else {
             return false;
         }
+    }
+
+    solveOneSquare(squareNumber) {
+
+        let row = Math.floor(squareNumber/9);
+        let col = squareNumber % 9;
+
+        let currentGridState = this.state.grid.slice()
+
+        // Is the grid solved? Return true
+        if (this.isSolved(currentGridState)) {
+            this.setState({
+                status: "The sudoku has been solved",
+                grid: currentGridState,
+            });
+            return true;
+        
+        // Has the box already been solved? Skip to next one
+        } else if (currentGridState[row][col] !== 0) {
+            return this.solveOneSquare(squareNumber + 1);
+
+        // Have we already done 81 boxes? Failure
+        } else if (squareNumber > 80) {
+            return false;
+        
+        // All other cases - guess numbers in the box
+        } else {
+
+            // Try the numbers from 1 to 9
+            for (let i = 1; i < 10; i++) {
+
+                // Only try to put in a candidate if it works
+                if (this.testInsertion(currentGridState, row, col, i) === true) {
+
+                    //console.log("Trying to put a", i, "into", row, col)
+                    
+                    // Put the number into the grid and update image
+                    currentGridState[row][col] = i;
+                    this.setState({
+                        status: "Solving...",
+                        grid: currentGridState,
+                    });
+
+                    // If the next box also works, return true
+                    if (this.solveOneSquare(squareNumber + 1)) {
+                        return true;
+
+                    // Otherwise, reset the box
+                    } else {
+                        currentGridState[row][col] = 0;
+
+                        this.setState({
+                            status: "Solving...",
+                            grid: currentGridState,
+                        });
+                    }
+                }
+            }
+
+            // Backtrack if no numbers from 1 to 9 work
+            // If there is a contradiction, backtrack
+            return false;
+
+        }
+    }
+
+    solve() {
+        this.solveOneSquare(0);
     }
 
 }
