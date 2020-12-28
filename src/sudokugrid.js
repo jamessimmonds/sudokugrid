@@ -2,6 +2,7 @@ import React from 'react';
 
 import SudokuGridRow from './sudokugridrow.js';
 import deepcopy from './deepcopy.js';
+import HistorySlider from './historyslider.js';
 
 class SudokuGrid extends React.Component {
 
@@ -24,6 +25,8 @@ class SudokuGrid extends React.Component {
                 [0,0,5,0,1,0,3,0,0]
             ],
             history: [],
+            isSliderHidden: true,
+            sliderMax: null,
         };
     }
 
@@ -46,16 +49,8 @@ class SudokuGrid extends React.Component {
                 {this.renderGrid()}
                 <button className="solveButton" onClick={() => this.solve()}>Solve sudoku</button>
                 <p>{this.state.status}</p>
+                <HistorySlider isHidden={this.state.isSliderHidden} sliderMax={this.state.sliderMax} />
             </div>);
-    }
-
-    updateState(currentState, status) {
-
-        this.setState({
-            status: status,
-            grid: currentState,
-        });
-
     }
 
     // Solving functions
@@ -73,6 +68,7 @@ class SudokuGrid extends React.Component {
         this.setState({
             status: test ? "The test has passed" : "The test has failed",
             grid: currentGridState,
+            isSliderHidden: false,
         })
 
     }
@@ -193,7 +189,17 @@ class SudokuGrid extends React.Component {
         // Is the grid solved? Return true
         if (this.isSolved(currentGridState)) {
             
-            this.updateState(this.state.grid.slice(), "The sudoku is solved");
+            this.setState(state => {
+
+                const historyLength = state.history.length;
+
+                return {
+                    grid: this.state.grid.slice(),
+                    status: "The sudoku has been solved",
+                    isSliderHidden: false,
+                    sliderMax: historyLength,
+                }
+            });
 
             return true;
         
