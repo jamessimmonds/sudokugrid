@@ -4,6 +4,7 @@ class HistorySlider extends React.Component {
 
     render () {
         return <div>
+            <br></br><br></br>
             <label 
                 style={{display: this.props.isHidden ? "none" : "inline"}}
                 htmlFor="slider"

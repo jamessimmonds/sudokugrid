@@ -14,7 +14,6 @@ class SudokuGrid extends React.Component {
         super(props);
 
         this.state = {
-            status: "Ready to solve",
             grid: [
                 [0,0,3,0,2,0,6,0,0],
                 [9,0,0,3,0,5,0,0,1],
@@ -50,8 +49,11 @@ class SudokuGrid extends React.Component {
             <div>
                 <h1>Sudoku puzzle</h1>
                 {this.renderGrid()}
-                <button className="solveButton" onClick={() => this.solve()}>Solve sudoku</button>
-                <p>{this.state.status}</p>
+                <button 
+                    className="solveButton" 
+                    onClick={() => this.solve()}
+                    style={{display: this.state.isSliderHidden ? "inline" : "none"}}
+                >Solve sudoku</button>
                 <HistorySlider 
                     isHidden={this.state.isSliderHidden} 
                     sliderMax={this.state.sliderMax}
@@ -94,7 +96,6 @@ class SudokuGrid extends React.Component {
 
                 return {
                     grid: this.state.grid.slice(),
-                    status: "The sudoku has been solved",
                     isSliderHidden: false,
                     sliderMax: historyLength,
                     sliderValue: historyLength

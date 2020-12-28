@@ -58,3 +58,7 @@ div .sudokuGridRow:nth-child(3n) {
 #slider {
     width: 600px;
 }
+
+label {
+    font-weight: bold;
+}
