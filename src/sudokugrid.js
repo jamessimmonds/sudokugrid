@@ -1,6 +1,7 @@
 import React from 'react';
 
-import SudokuGridRow from './sudokugridrow.js'
+import SudokuGridRow from './sudokugridrow.js';
+import deepcopy from './deepcopy.js';
 
 class SudokuGrid extends React.Component {
 
@@ -48,6 +49,8 @@ class SudokuGrid extends React.Component {
     }
 
     updateState(currentState, status) {
+
+        this.setState(this.state);
 
         this.setState({
             status: status,
@@ -233,6 +236,7 @@ class SudokuGrid extends React.Component {
 
             // Backtrack if no numbers from 1 to 9 work
             // If there is a contradiction, backtrack
+            console.log(deepcopy(this.state.grid.slice()));
             return false;
 
         }
