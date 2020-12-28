@@ -23,6 +23,7 @@ class SudokuGrid extends React.Component {
                 [8,0,0,2,0,3,0,0,9],
                 [0,0,5,0,1,0,3,0,0]
             ],
+            history: [],
         };
     }
 
@@ -50,12 +51,11 @@ class SudokuGrid extends React.Component {
 
     updateState(currentState, status) {
 
-        this.setState(this.state);
-
         this.setState({
             status: status,
             grid: currentState,
         });
+
     }
 
     // Solving functions
@@ -73,7 +73,6 @@ class SudokuGrid extends React.Component {
         this.setState({
             status: test ? "The test has passed" : "The test has failed",
             grid: currentGridState,
-            history: this.state.history.slice(),
         })
 
     }
@@ -219,7 +218,6 @@ class SudokuGrid extends React.Component {
                     
                     // Put the number into the grid and update image
                     currentGridState[row][col] = i;
-                    this.updateState(currentGridState, "Solving...")
 
                     // If the next box also works, return true
                     if (this.solveOneSquare(squareNumber + 1)) {
@@ -228,7 +226,6 @@ class SudokuGrid extends React.Component {
                     // Otherwise, reset the box
                     } else {
                         currentGridState[row][col] = 0;
-                        this.updateState(currentGridState, "Solving...")
                         
                     }
                 }
@@ -236,7 +233,6 @@ class SudokuGrid extends React.Component {
 
             // Backtrack if no numbers from 1 to 9 work
             // If there is a contradiction, backtrack
-            console.log(deepcopy(this.state.grid.slice()));
             return false;
 
         }
