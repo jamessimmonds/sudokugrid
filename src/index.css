@@ -54,3 +54,7 @@ div .sudokuGridRow:nth-child(3n) {
 .solveButton:hover {
     background: #12a2bb;
 }
+
+#slider {
+    width: 600px;
+}

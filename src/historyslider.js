@@ -4,7 +4,10 @@ class HistorySlider extends React.Component {
 
     render () {
         return <div>
-            <label htmlFor="slider">Jump to state: {this.props.value}</label>
+            <label 
+                style={{display: this.props.isHidden ? "none" : "inline"}}
+                htmlFor="slider"
+            >Jump to state: {this.props.value}</label><br></br><br></br>
             <input 
                 type="range" 
                 min="1"
