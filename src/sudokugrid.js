@@ -47,6 +47,14 @@ class SudokuGrid extends React.Component {
             </div>);
     }
 
+    updateState(currentState, status) {
+
+        this.setState({
+            status: status,
+            grid: currentState,
+        });
+    }
+
     // Solving functions
 
     test() {
@@ -62,6 +70,7 @@ class SudokuGrid extends React.Component {
         this.setState({
             status: test ? "The test has passed" : "The test has failed",
             grid: currentGridState,
+            history: this.state.history.slice(),
         })
 
     }
@@ -181,10 +190,9 @@ class SudokuGrid extends React.Component {
 
         // Is the grid solved? Return true
         if (this.isSolved(currentGridState)) {
-            this.setState({
-                status: "The sudoku has been solved",
-                grid: currentGridState,
-            });
+            
+            this.updateState(this.state.grid.slice(), "The sudoku is solved");
+
             return true;
         
         // Has the box already been solved? Skip to next one
@@ -208,10 +216,7 @@ class SudokuGrid extends React.Component {
                     
                     // Put the number into the grid and update image
                     currentGridState[row][col] = i;
-                    this.setState({
-                        status: "Solving...",
-                        grid: currentGridState,
-                    });
+                    this.updateState(currentGridState, "Solving...")
 
                     // If the next box also works, return true
                     if (this.solveOneSquare(squareNumber + 1)) {
@@ -220,11 +225,8 @@ class SudokuGrid extends React.Component {
                     // Otherwise, reset the box
                     } else {
                         currentGridState[row][col] = 0;
-
-                        this.setState({
-                            status: "Solving...",
-                            grid: currentGridState,
-                        });
+                        this.updateState(currentGridState, "Solving...")
+                        
                     }
                 }
             }
