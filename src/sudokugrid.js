@@ -211,6 +211,8 @@ class SudokuGrid extends React.Component {
             // Try the numbers from 1 to 9
             for (let i = 1; i < 10; i++) {
 
+                this.updateHistory(deepcopy(currentGridState));
+
                 // Only try to put in a candidate if it works
                 if (this.testInsertion(currentGridState, row, col, i) === true) {
 
@@ -236,6 +238,17 @@ class SudokuGrid extends React.Component {
             return false;
 
         }
+    }
+
+    updateHistory(currentGridState) {
+
+        this.setState(state => {
+            const history = state.history.concat([currentGridState]);
+            return {
+                history,
+            };
+        });
+
     }
 
     solve() {
