@@ -3,6 +3,8 @@ import React from 'react';
 import SudokuGridRow from './sudokugridrow.js';
 import deepcopy from './deepcopy.js';
 import HistorySlider from './historyslider.js';
+import isSolved from './issolved.js';
+import testInsertion from './testinsertion.js';
 
 class SudokuGrid extends React.Component {
 
@@ -27,6 +29,7 @@ class SudokuGrid extends React.Component {
             history: [],
             isSliderHidden: true,
             sliderMax: null,
+            sliderValue: 1,
         };
     }
 
@@ -49,135 +52,29 @@ class SudokuGrid extends React.Component {
                 {this.renderGrid()}
                 <button className="solveButton" onClick={() => this.solve()}>Solve sudoku</button>
                 <p>{this.state.status}</p>
-                <HistorySlider isHidden={this.state.isSliderHidden} sliderMax={this.state.sliderMax} />
+                <HistorySlider 
+                    isHidden={this.state.isSliderHidden} 
+                    sliderMax={this.state.sliderMax}
+                    value={this.state.sliderValue}
+                    handleSlide={(event) => this.handleSlide(event)}
+                />
             </div>);
     }
 
+    handleSlide(event) {
+        this.setState(state => {
+
+            const sliderValue = event.target.value;
+            const snapshot = deepcopy(this.state.history[event.target.value]);
+            
+            return {
+                grid: snapshot,
+                sliderValue: sliderValue,
+            }
+        });
+    }
+
     // Solving functions
-
-    test() {
-
-        let currentGridState = this.state.grid.slice();
-
-        //let test = this.isSolved(currentGridState);
-        //let test = this.testInsertionRow(currentGridState, 2, 8);
-        //let test = this.testInsertionColumn(currentGridState, 1, 8);
-        //let test = this.testInsertionBox(currentGridState, 6, 3, 1)
-        let test = this.testInsertion(currentGridState, 0, 5, 1)
-
-        this.setState({
-            status: test ? "The test has passed" : "The test has failed",
-            grid: currentGridState,
-            isSliderHidden: false,
-        })
-
-    }
-
-    isSolved(sudoku) {
-        let noZeroes = true;
-
-        for (let row = 0; row < 9; row++) {
-            for (let col = 0; col < 9; col++) {
-                if (sudoku[row][col] === 0) {
-                    noZeroes = false;
-                }
-            }
-        }
-
-        return noZeroes
-    }
-
-    testInsertionRow(sudoku, row, candidate) {
-        let testResult = true;
-
-        for (let col = 0; col < 9; col++) {
-            
-            //console.log("Currently testing (", row, ",", col, ")for candidate", candidate);
-            //console.log("This square has a ", sudoku[row][col]);
-            
-            if (sudoku[row][col] === candidate) {
-                testResult = false;
-            }
-        }
-
-        return testResult;
-
-    }
-
-    testInsertionColumn(sudoku, col, candidate) {
-        let testResult = true;
-
-        for (let row = 0; row < 9; row++) {
-            
-            //console.log("Currently testing (", row, ",", col, ")for candidate", candidate);
-            //console.log("This square has a ", sudoku[row][col]);
-            
-            if (sudoku[row][col] === candidate) {
-                testResult = false;
-            }
-        }
-
-        return testResult;
-
-    }
-
-    testInsertionBox(sudoku, rowIndex, columnIndex, candidate) {
-        let testResult = true;
-
-        let rowBox = Math.floor(rowIndex/3);
-        let colBox = Math.floor(columnIndex/3);
-
-        // Determine which row indices need to be checked
-        let rowIndices = [];
-
-        for (let rowNumber = 0; rowNumber < 9; rowNumber++) {
-            if (Math.floor(rowNumber/3) === rowBox) {
-                rowIndices.push(rowNumber)
-            }
-        }
-
-        // Determine which column indices need to be checked
-        let colIndices = [];
-
-        for (let colNumber = 0; colNumber < 9; colNumber++) {
-            if (Math.floor(colNumber/3) === colBox) {
-                colIndices.push(colNumber)
-            }
-        }
-
-        for (let i = 0; i < 3; i++) {
-            for (let j = 0; j < 3; j++) {
-
-                let row = rowIndices[i];
-                let col = colIndices[j];
-            
-                //console.log("Currently testing (", row, ",", col, ")for candidate", candidate);
-                //console.log("This square has a ", sudoku[row][col]);
-                
-                if (sudoku[row][col] === candidate) {
-                    testResult = false;
-                }
-
-            }
-        }
-
-        return testResult;
-
-    }
-
-    testInsertion(sudoku, row, col, candidate) {
-        let rowTest = this.testInsertionRow(sudoku, row, candidate);
-        let colTest = this.testInsertionColumn(sudoku, col, candidate);
-        let boxTest = this.testInsertionBox(sudoku, row, col, candidate);
-
-        //console.log("Results for", row, col, candidate, rowTest, colTest, boxTest);
-
-        if (rowTest && colTest && boxTest) {
-            return true;
-        } else {
-            return false;
-        }
-    }
 
     solveOneSquare(squareNumber) {
 
@@ -187,7 +84,9 @@ class SudokuGrid extends React.Component {
         let currentGridState = this.state.grid.slice()
 
         // Is the grid solved? Return true
-        if (this.isSolved(currentGridState)) {
+        if (isSolved(currentGridState)) {
+
+            this.updateHistory(currentGridState);
             
             this.setState(state => {
 
@@ -198,6 +97,7 @@ class SudokuGrid extends React.Component {
                     status: "The sudoku has been solved",
                     isSliderHidden: false,
                     sliderMax: historyLength,
+                    sliderValue: historyLength
                 }
             });
 
@@ -220,7 +120,7 @@ class SudokuGrid extends React.Component {
                 this.updateHistory(deepcopy(currentGridState));
 
                 // Only try to put in a candidate if it works
-                if (this.testInsertion(currentGridState, row, col, i) === true) {
+                if (testInsertion(currentGridState, row, col, i) === true) {
 
                     //console.log("Trying to put a", i, "into", row, col)
                     
@@ -246,6 +146,10 @@ class SudokuGrid extends React.Component {
         }
     }
 
+    solve() {
+        this.solveOneSquare(0);
+    }
+
     updateHistory(currentGridState) {
 
         this.setState(state => {
@@ -255,10 +159,6 @@ class SudokuGrid extends React.Component {
             };
         });
 
-    }
-
-    solve() {
-        this.solveOneSquare(0);
     }
 
 }
